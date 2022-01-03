@@ -1,4 +1,75 @@
-body {
+:root {
+  // --brand: #ffbf00;
+  // --light-gray: #eeeeee;
+  // --gray: #555555;
+}
+
+/*################## 초기화 ###################*/
+* {
   margin: 0;
   padding: 0;
+
+  &,
+  &::before,
+  &::after {
+    box-sizing: inherit;
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #c5c6ca;
+    border-radius: 25px 25px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #c5c6ca;
+  }
+}
+
+html {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  font-size: 62.5%;
+}
+
+input {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+li {
+  list-style-type: none;
+}
+
+a:link,
+a:visited {
+  text-decoration: none;
+  color: #333;
+}
+a:hover,
+a:focus {
+  text-decoration: none;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
 }
