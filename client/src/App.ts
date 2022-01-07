@@ -21,7 +21,7 @@ class App implements App {
 
     const chatButton = document.createElement("div");
     chatButton.textContent = "챗버튼";
-    chatButton.onclick = () => Router.link("/chat");
+    chatButton.onclick = () => Router.link("/main/chat");
 
     this.content.appendChild(homeButton);
     this.content.appendChild(linkButton);
@@ -29,13 +29,24 @@ class App implements App {
   }
 
   render() {
-    return [
-      this.content,
-      Router.render(
-        Router.routes({ path: "/main", component: new Main().render() }),
-        Router.routes({ path: "/chat", component: new Chat().render() })
-      ),
-    ];
+    return Router.routes([
+      {
+        path: "/",
+        element: this.content,
+      },
+      {
+        path: "/main",
+        element: new Main().render(),
+        children: [
+          {
+            path: "/main/chat",
+            element: new Chat().render(),
+          },
+        ],
+      },
+    ]);
+    // Router.routes({ path: "/main", component: this.content }),
+    //   Router.routes({ path: "/chat", component: new Chat().render() });
   }
 }
 

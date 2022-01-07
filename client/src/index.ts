@@ -1,7 +1,7 @@
 import App from "./App";
-import { fetchDOM } from "router";
+import Router from "router";
 import "./index.scss";
 
 document.addEventListener("DOMContentLoaded", () => {
-  fetchDOM(App.render(), document.getElementById("root"));
+  Router.fetchDOM(App.render(), document.getElementById("root"));
 });
