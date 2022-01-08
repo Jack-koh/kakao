@@ -1,3 +1,3 @@
-import { Router } from "./router";
+import { Router, View } from "./router";
 
 export default new Router();
