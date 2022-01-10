@@ -1,41 +1,15 @@
-export class View {
-  constructor() {}
-  update(newDOM: HTMLElement | null): void {
-    console.log(newDOM);
-    // const newElements = Array.from(newDOM.querySelectorAll("*"));
-    // const curElements = Array.from(this.$parentElement.querySelectorAll("*"));
-    // console.log(newElements);
-    // newElements.forEach((newEl, i) => {
-    //   const curEl = curElements[i];
-    //   // 변경된 텍스트 업데이트
-    //   if (
-    //     !newEl.isEqualNode(curEl) &&
-    //     newEl.firstChild?.nodeValue.trim() !== ""
-    //   ) {
-    //     curEl.textContent = newEl.textContent;
-    //   }
-    //   // 변경된 속성 업데이트
-    //   if (!newEl.isEqualNode(curEl))
-    //     Array.from(newEl.attributes).forEach((attr) =>
-    //       curEl.setAttribute(attr.name, attr.value)
-    //     );
-    // });
-  }
-}
-
 type Routes = {
   path: string;
   element: HTMLElement;
   children?: Routes[];
 };
 
-export class Router extends View {
+export class Router {
   $routes: Routes[];
   body: HTMLElement;
   root: HTMLElement | null;
   layouts: any;
   constructor() {
-    super();
     this.$routes = [];
     this.root = null;
     this.layouts = [];
@@ -52,19 +26,19 @@ export class Router extends View {
     dispatchEvent(new Event("popstate"));
   }
 
-  fetchDOM(
-    Components: { render: () => HTMLElement | null },
-    root: HTMLElement | null
-  ) {
-    this.root = root;
-    if (this.root && Components) {
-      const comp = Components.render();
-      if (comp) this.root.insertAdjacentElement("beforeend", comp);
+  outlet(args?: { id?: string; className?: string | string[] }) {
+    const outlet = document.createElement("div");
+    outlet.setAttribute("outlet", "outlet");
+    if (args) {
+      const { id, className } = args;
+      if (id) outlet.id = id;
+      if (className) {
+        const isArray = Array.isArray(className);
+        if (isArray) outlet.classList.add(...className);
+        else outlet.classList.add(className);
+      }
     }
-  }
-
-  outlet(target: HTMLElement) {
-    target.setAttribute("outlet", "outlet");
+    return outlet.outerHTML;
   }
 
   match = (): HTMLElement | null => {
@@ -76,6 +50,7 @@ export class Router extends View {
       for (let i = 0; i < routes.length; i++) {
         if (el) break;
         const { path, children, element } = routes[i];
+
         if (path === pathname) el = element;
         else if (children && children.length && pathname.includes(path)) {
           if (element) this.layouts.push(element);
@@ -87,47 +62,51 @@ export class Router extends View {
     return el;
   };
 
-  render = () => {
-    const match = this.match();
-    if (this.root) {
-      if (match) {
-        const length = this.layouts.length;
-        if (length) {
-          const container = this.layouts[0];
-          const target = container.querySelector("[outlet]");
-          if (!target)
-            throw new Error(
-              "최상위 노드를 outlet으로 사용하지 않는지 확인해보세요."
-            );
-          const clone = target.cloneNode(true);
+  render = async () => {
+    const m = this.match();
+    const l = this.layouts;
+    const r = this.root;
+    if (!r) return;
+    if (m) {
+      const len = l.length;
+      if (len) {
+        const w = l[0];
+        const t: HTMLElement | null = await new Promise((resolve) => {
+          setTimeout(() => resolve(w.querySelector("[outlet]")), 0);
+        });
+        if (!t) throw new Error("outlet이 존재하지 않거나 최상위 노드를 outlet으로 사용하지 않는지 확인해보세요."); // prettier-ignore
 
-          const recursive = (outlet: HTMLElement | null, l: number) => {
-            if (l < length) {
-              if (!outlet) throw new Error("outlet이 존재하지 않습니다");
-              if (outlet) {
-                outlet.innerHTML = "";
-                outlet.appendChild(
-                  this.layouts[l + 1]?.cloneNode(true) || match
-                );
-                recursive(outlet.querySelector("[outlet]"), l + 1);
-              }
-            }
-          };
-          recursive(clone, 0);
-          target.replaceWith(clone);
-          if (!this.root.contains(container)) return container;
-        } else {
-          const outlet = match.querySelector("[outlet]");
-          if (outlet) outlet.innerHTML = "";
-          this.root.firstChild?.replaceWith(match);
+        const c = t.cloneNode(true) as HTMLElement | null;
+        const recursive = (o: HTMLElement | null, d: number) => {
+          if (d < len) {
+            if (o) {
+              o.innerHTML = "";
+              o.appendChild(l[d + 1]?.cloneNode(true) || m);
+              recursive(o.querySelector("[outlet]"), d + 1);
+            } else throw new Error("outlet이 존재하지 않습니다");
+          }
+        };
+        recursive(c, 0);
+        if (c) t.replaceWith(c);
+        if (!r.contains(w)) {
+          r.innerHTML = "";
+          r.appendChild(w);
         }
-      } else this.root.innerHTML = ""; // 매칭되는 URL 존재하지 않음
-    }
-    return match;
+      } else {
+        const o = m.querySelector("[outlet]");
+        if (o) o.innerHTML = "";
+        r.innerHTML = "";
+        r.appendChild(m);
+      }
+    } else r.innerHTML = ""; // 매칭되는 URL 존재하지 않음
+
+    return r;
   };
 
-  routes(routes: Routes[]): HTMLElement | null {
+  routes(root: HTMLElement, routes: Routes[]): HTMLElement {
     this.$routes = routes;
-    return this.render();
+    this.root = root;
+    this.render();
+    return root;
   }
 }

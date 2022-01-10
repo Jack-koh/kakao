@@ -1,15 +1,22 @@
+import { Components } from "view";
 import Router from "router";
 import Main from "pages/Main";
 import Chat from "pages/Chat";
-import Content from "pages/Content";
-import { Components } from "utils";
+import Login from "pages/Login";
 
 class App extends Components {
+  $parent: HTMLElement;
+  constructor() {
+    super();
+    this.$parent = document.createElement("div");
+    this.$parent.id = "app";
+  }
+
   render() {
-    return Router.routes([
+    return Router.routes(this.$parent, [
       {
         path: "/",
-        element: new Content().render(),
+        element: new Login().render(),
       },
       {
         path: "/main",
@@ -23,4 +30,4 @@ class App extends Components {
   }
 }
 
-export default new App();
+export default App;

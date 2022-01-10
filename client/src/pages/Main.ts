@@ -1,9 +1,8 @@
-import { Components } from "utils";
+import { Components } from "view";
 import Router from "router";
 
 interface Main {
   $parent: HTMLElement;
-  outlet: HTMLElement;
 }
 
 class Main extends Components {
@@ -11,11 +10,13 @@ class Main extends Components {
     super();
     this.$parent = document.createElement("div");
     this.$parent.textContent = "메인페이지 입니다";
-    this.outlet = document.createElement("div");
-    this.outlet.id = "main-outlet";
-    this.$parent.appendChild(this.outlet);
+  }
 
-    Router.outlet(this.outlet);
+  template() {
+    return `
+      메인페이지 입니다
+      ${Router.outlet()}
+    `;
   }
 
   render() {

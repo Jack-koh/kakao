@@ -1,4 +1,4 @@
-import { Components } from "utils";
+import { Components } from "view";
 
 interface Chat {
   $parent: HTMLElement;
