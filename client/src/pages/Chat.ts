@@ -1,14 +1,20 @@
 import { Components } from "view";
 
-interface Chat {
-  $parent: HTMLElement;
-}
-
 class Chat extends Components {
   constructor() {
     super();
-    this.$parent = document.createElement("div");
-    this.$parent.textContent = "채팅페이지 입니다";
+  }
+
+  template() {
+    return `
+      <div>
+        채팅페이지 입니다
+      </div>
+    `;
+  }
+
+  methods() {
+    return {};
   }
 
   render() {

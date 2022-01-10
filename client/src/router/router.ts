@@ -66,7 +66,7 @@ export class Router {
     const m = this.match();
     const l = this.layouts;
     const r = this.root;
-    if (!r) return;
+    if (!r) throw new Error("렌더링 할 대상이 존재하지 않습니다."); // prettier-ignore
     if (m) {
       const len = l.length;
       if (len) {
@@ -99,8 +99,6 @@ export class Router {
         r.appendChild(m);
       }
     } else r.innerHTML = ""; // 매칭되는 URL 존재하지 않음
-
-    return r;
   };
 
   routes(root: HTMLElement, routes: Routes[]): HTMLElement {

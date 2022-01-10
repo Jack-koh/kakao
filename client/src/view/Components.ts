@@ -1,7 +1,4 @@
-interface Components {
-  methods?(): void;
-  template?(): string;
-}
+import Event from "./Events";
 
 function FunctionNameLogger() {
   return function (
@@ -14,40 +11,53 @@ function FunctionNameLogger() {
   };
 }
 
-abstract class Components {
-  abstract $parent: HTMLElement;
+abstract class Components extends Event {
   abstract render(): HTMLElement;
-  methods?(): void;
-  template?(): string;
+  abstract template(): string;
 
   constructor() {
-    let timer: NodeJS.Timeout | null = setTimeout(() => {
-      this.mount();
-      if (timer) clearTimeout(timer);
-    }, 0);
-    timer = null;
+    super();
+    this.mount();
+    this.$parent;
+  }
+
+  insertNode() {
+    if (this.template) {
+      let template: HTMLTemplateElement | null = document.createElement("template"); // prettier-ignore
+      template.innerHTML = this.template();
+      let insertNode = document.importNode(template, true).content.firstElementChild as HTMLElement; // prettier-ignore
+      if (this.$parent && insertNode) this.update(insertNode);
+      else this.$parent = insertNode as HTMLElement;
+    }
+    this.click();
   }
 
   mount() {
-    if (this.template) {
-      this.$parent.innerHTML = this.template();
-      if (this.methods) this.methods();
-      this.renderOverride();
-    }
+    this.insertNode();
+    this.RENDER();
   }
 
-  renderOverride() {
+  RENDER() {
     // 각컴포넌트 render 메서드 오버라이딩
     const render = this.render.bind(this);
     this.render = () => {
-      if (this.template) this.$parent.innerHTML = this.template();
-      if (this.methods) this.methods();
-      const replaceNode = this.$parent.parentNode;
+      this.insertNode();
       return render();
     };
   }
 
-  update(newDOM: HTMLElement | null): void {
+  update(newDOM: HTMLElement): void {
+    const newElements: HTMLElement[] = Array.from(newDOM.querySelectorAll("*"));
+    const prevElements:HTMLElement[] = Array.from(this.$parent.querySelectorAll("*")); // prettier-ignore
+    newElements.forEach((newEl: HTMLElement, i: number) => {
+      const prevEl = prevElements[i];
+      const condition =
+        !newEl.isEqualNode(prevEl) &&
+        newEl.firstChild?.nodeValue?.trim() !== "";
+
+      if (condition) prevEl.textContent = newEl.textContent;
+    });
+    // const curElements = Array.from(this.$parentElement.querySelectorAll("*"));
     // const newElements = Array.from(newDOM.querySelectorAll("*"));
     // const curElements = Array.from(this.$parentElement.querySelectorAll("*"));
     // console.log(newElements);

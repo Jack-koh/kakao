@@ -5,11 +5,16 @@ import Chat from "pages/Chat";
 import Login from "pages/Login";
 
 class App extends Components {
-  $parent: HTMLElement;
   constructor() {
     super();
-    this.$parent = document.createElement("div");
-    this.$parent.id = "app";
+  }
+
+  template() {
+    return `<div id="app"></div>`;
+  }
+
+  methods() {
+    return {};
   }
 
   render() {
@@ -17,14 +22,18 @@ class App extends Components {
       {
         path: "/",
         element: new Login().render(),
-      },
-      {
-        path: "/main",
-        element: new Main().render(),
-      },
-      {
-        path: "/chat",
-        element: new Chat().render(),
+        children: [
+          {
+            path: "/main",
+            element: new Main().render(),
+            children: [
+              {
+                path: "/main/chat",
+                element: new Chat().render(),
+              },
+            ],
+          },
+        ],
       },
     ]);
   }
