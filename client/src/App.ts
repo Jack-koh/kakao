@@ -21,15 +21,15 @@ class App extends Components {
     return Router.routes(this.$parent, [
       {
         path: "/",
-        element: new Login().render(),
+        component: Login,
         children: [
           {
             path: "/main",
-            element: new Main().render(),
+            component: Main,
             children: [
               {
                 path: "/main/chat",
-                element: new Chat().render(),
+                component: Chat,
               },
             ],
           },

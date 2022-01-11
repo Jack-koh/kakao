@@ -8,14 +8,14 @@ const data = {
 class Main extends Components {
   constructor() {
     super();
-    console.log("2");
+    console.log("Main");
   }
 
   template() {
     return `
       <div>
         메인페이지 입니다
-        <div v-onclick="text">텍스트버튼</div>
+        <div v-onclick="text" id="textBtn">텍스트버튼</div>
         <div id="text">${data.number.join(", ")}</div>
         ${Router.outlet()}
       </div>
@@ -23,16 +23,13 @@ class Main extends Components {
   }
 
   methods() {
+    const render = this.render.bind(this);
     return {
-      text: () => {
+      text() {
         data.number.push(data.number[data.number.length - 1] + 1);
-        this.render();
+        render();
       },
     };
-  }
-
-  render() {
-    return this.$parent;
   }
 }
 

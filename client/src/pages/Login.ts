@@ -4,7 +4,7 @@ import Router from "router";
 class Login extends Components {
   constructor() {
     super();
-    console.log("1");
+    console.log("Login");
   }
 
   template() {
@@ -24,10 +24,6 @@ class Login extends Components {
       main: Router.link.bind(this, "/main"),
       chat: Router.link.bind(this, "/main/chat"),
     };
-  }
-
-  render() {
-    return this.$parent;
   }
 }
 

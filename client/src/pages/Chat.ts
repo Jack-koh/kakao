@@ -3,7 +3,7 @@ import { Components } from "view";
 class Chat extends Components {
   constructor() {
     super();
-    console.log("3");
+    console.log("Chat");
   }
 
   template() {
