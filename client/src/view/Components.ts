@@ -12,13 +12,12 @@ function FunctionNameLogger() {
 }
 
 abstract class Components extends Event {
-  abstract render(): HTMLElement;
   abstract template(): string;
 
   constructor() {
     super();
-    this.mount();
     this.$parent;
+    if (this.mount) this.mount();
   }
 
   insertNode() {
@@ -34,16 +33,11 @@ abstract class Components extends Event {
 
   mount() {
     this.insertNode();
-    this.RENDER();
   }
 
-  RENDER() {
-    // 각컴포넌트 render 메서드 오버라이딩
-    const render = this.render.bind(this);
-    this.render = () => {
-      this.insertNode();
-      return render();
-    };
+  render() {
+    this.insertNode();
+    return this.$parent;
   }
 
   update(newDOM: HTMLElement): void {

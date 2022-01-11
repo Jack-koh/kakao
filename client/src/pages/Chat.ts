@@ -3,6 +3,7 @@ import { Components } from "view";
 class Chat extends Components {
   constructor() {
     super();
+    console.log("3");
   }
 
   template() {
@@ -15,11 +16,6 @@ class Chat extends Components {
 
   methods() {
     return {};
-  }
-
-  render() {
-    console.log("채팅페이지");
-    return this.$parent;
   }
 }
 

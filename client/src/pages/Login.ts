@@ -4,12 +4,13 @@ import Router from "router";
 class Login extends Components {
   constructor() {
     super();
+    console.log("1");
   }
 
   template() {
     return `
       <div id="app-content">
-        <div v-onclick="home">홈버튼</div>
+        <div id="button" v-onclick="home">홈버튼</div>
         <div v-onclick="main">메인버튼</div>
         <div v-onclick="chat">쳇버튼</div>
         ${Router.outlet()}
@@ -26,7 +27,6 @@ class Login extends Components {
   }
 
   render() {
-    console.log("로그인 페이지");
     return this.$parent;
   }
 }

@@ -8,6 +8,7 @@ const data = {
 class Main extends Components {
   constructor() {
     super();
+    console.log("2");
   }
 
   template() {
@@ -25,14 +26,12 @@ class Main extends Components {
     return {
       text: () => {
         data.number.push(data.number[data.number.length - 1] + 1);
-        console.log("check");
         this.render();
       },
     };
   }
 
   render() {
-    console.log("메인페이지");
     return this.$parent;
   }
 }

@@ -14,8 +14,6 @@ abstract class Event {
     let clicks: click = this.$parent.querySelectorAll("[v-onclick]");
     let methods: methods = this.methods ? this.methods() : {};
 
-    console.log(clicks);
-
     for (const t of clicks) {
       const target = t as HTMLElement;
       const ev = target.getAttribute("v-onclick");
