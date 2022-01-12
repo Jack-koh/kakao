@@ -50,6 +50,7 @@ abstract class Components extends Event {
     newElements.forEach((newEl: HTMLElement, i: number) => {
       const prevEl = prevElements[i];
       const condition =
+        !newEl.getAttribute("outlet") &&
         !newEl.isEqualNode(prevEl) &&
         newEl.firstChild?.nodeValue?.trim() !== "";
       if (condition) prevEl.textContent = newEl.textContent;

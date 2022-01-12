@@ -15,10 +15,6 @@ abstract class Event {
     let methods: methods = this.methods ? this.methods() : {};
     if (!clicks.length) return;
 
-    // console.log(this.$parent);
-    // console.log(clicks);
-    // console.log(methods);
-
     for (const t of clicks) {
       const target = t as HTMLElement;
       const ev = target.getAttribute("v-onclick");
