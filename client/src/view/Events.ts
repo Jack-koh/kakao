@@ -1,11 +1,29 @@
-interface Event {
+interface Events {
   $parent: HTMLElement;
+  newParent: HTMLElement;
 }
 
-abstract class Event {
+abstract class Events {
   abstract methods(): { [key: string]: () => void };
-  constructor() {
-    this.$parent;
+
+  update(generateTemplate: Function): void {
+    generateTemplate();
+    const newElements: HTMLElement[] = Array.from(this.newParent.querySelectorAll("*")); // prettier-ignore
+    const prevElements:HTMLElement[] = Array.from(this.$parent.querySelectorAll("*")); // prettier-ignore
+
+    newElements.forEach((newEl: HTMLElement, i: number) => {
+      const prevEl = prevElements[i];
+      const condition =
+        !newEl.getAttribute("outlet") &&
+        !newEl.isEqualNode(prevEl) &&
+        newEl.firstChild?.nodeValue?.trim() !== "";
+      if (condition) prevEl.textContent = newEl.textContent;
+
+      if (!newEl.isEqualNode(prevEl))
+        Array.from(newEl.attributes).forEach((attr) => {
+          prevEl.setAttribute(attr.name, attr.value);
+        });
+    });
   }
 
   click() {
@@ -23,4 +41,4 @@ abstract class Event {
   }
 }
 
-export default Event;
+export default Events;

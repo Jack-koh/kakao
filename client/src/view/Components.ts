@@ -1,6 +1,7 @@
-import Event from "./Events";
+import Events from "./Events";
 
-function FunctionNameLogger() {
+function render(name: any) {
+  console.log(name);
   return function (
     target: Object,
     key: string | symbol,
@@ -11,60 +12,56 @@ function FunctionNameLogger() {
   };
 }
 
-abstract class Components extends Event {
-  node!: HTMLElement;
-  abstract template(): string;
+interface State {
+  [key: string]: any;
+}
 
-  constructor() {
+interface Components {
+  newParent: HTMLElement;
+  $parent: HTMLElement;
+}
+
+abstract class Components extends Events implements Components {
+  abstract template(): string;
+  abstract methods(): { [key: string]: () => any };
+  mounted: boolean;
+  state: State;
+
+  constructor(state?: { state: { [key: string]: any } }) {
     super();
-    this.$parent;
+    this.state = state?.state || {};
     this.mount();
-    this.node;
+    this.newParent;
+    this.mounted = false;
   }
 
   generateTemplate() {
     type Template = HTMLTemplateElement | null;
     const template: Template = document.createElement("template"); // prettier-ignore
     template.innerHTML = this.template();
-    this.node = document.importNode(template, true).content.firstElementChild as HTMLElement; // prettier-ignore
+    this.newParent = document.importNode(template, true).content.firstElementChild as HTMLElement; // prettier-ignore
   }
 
   mount() {
-    if (!this.$parent) {
-      this.generateTemplate();
-      this.$parent = this.node;
-    }
+    this.generateTemplate();
+    this.$parent = this.newParent;
     this.click();
   }
 
   render(): HTMLElement {
-    this.update();
+    if (this.mounted) this.update(this.generateTemplate.bind(this));
+    else this.mounted = true;
     return this.$parent;
-  }
-
-  update(): void {
-    this.generateTemplate();
-    const newElements: HTMLElement[] = Array.from(this.node.querySelectorAll("*")); // prettier-ignore
-    const prevElements:HTMLElement[] = Array.from(this.$parent.querySelectorAll("*")); // prettier-ignore
-
-    newElements.forEach((newEl: HTMLElement, i: number) => {
-      const prevEl = prevElements[i];
-      const condition =
-        !newEl.getAttribute("outlet") &&
-        !newEl.isEqualNode(prevEl) &&
-        newEl.firstChild?.nodeValue?.trim() !== "";
-      if (condition) prevEl.textContent = newEl.textContent;
-
-      if (!newEl.isEqualNode(prevEl))
-        Array.from(newEl.attributes).forEach((attr) => {
-          prevEl.setAttribute(attr.name, attr.value);
-        });
-    });
   }
 
   destroyed() {
     console.log("destroyed");
   }
+
+  setState = (state: State) => {
+    this.state = state;
+    this.render();
+  };
 }
 
 export default Components;

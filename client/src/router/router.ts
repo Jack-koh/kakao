@@ -1,10 +1,9 @@
-type Component = {
-  new (...args: any[]): { render: () => HTMLElement; destroyed: () => void };
-};
+type Constructor = {new (...args: any[]): { render: () => HTMLElement; destroyed: () => void }}; // prettier-ignore
+type Component = { render: () => HTMLElement; destroyed: () => void };
 
 type Routes = {
   path: string;
-  component: Component;
+  component: Constructor;
   children?: Routes[];
 };
 
@@ -48,11 +47,11 @@ export class Router {
   }
 
   match = () => {
-    if (this.element) new this.element().destroyed();
-    this.layouts.forEach((l) => {});
+    if (this.element) this.element.destroyed();
+    this.layouts.reverse().forEach((l) => l.destroyed());
     const { pathname } = location;
     this.layouts = [];
-    let el: Component | null = null;
+    let el: Constructor | null = null;
     const rec = (routes: Routes[]): void => {
       for (let i = 0; i < routes.length; i++) {
         if (el) break;
@@ -60,33 +59,35 @@ export class Router {
 
         if (path === pathname) el = component;
         else if (children && children.length && pathname.includes(path)) {
-          if (component) this.layouts.push(component);
+          if (component) this.layouts.push(new component());
           rec(children);
         }
       }
     };
     rec(this.$routes);
-    this.element = el;
+    this.element = el ? new (el as Constructor)() : null;
   };
 
   render = async () => {
     this.match();
-    let M = this.element;
-    const L = this.layouts.map((Comp: Component) => new Comp().render());
-    const R = this.root;
-    if (!R) throw new Error("렌더링 할 대상이 존재하지 않습니다."); // prettier-ignore
-    if (M) {
-      const len = L.length;
-      const m = new M().render();
-      if (len) {
+    const L = this.layouts.map((Comp: Component) => Comp.render());
+    if (!this.root) throw new Error("렌더링 할 대상이 존재하지 않습니다."); // prettier-ignore
+    if (this.element) {
+      const m = this.element.render(); // router match 엘리먼트
+      if (L.length) {
+        // 최상위 엘리먼트 (wrapper)
         const W = L[0];
+        // 최상위 엘리먼트의 outlet
         const T = await new Promise((resolve) => {
-          setTimeout(() => resolve(W.querySelector("[outlet]")), 0);
+          let timer: NodeJS.Timer | null = setTimeout(() => {
+            resolve(W.querySelector("[outlet]"));
+            if (timer) timer = null;
+          }, 0);
         });
         if (!T) throw new Error("outlet이 존재하지 않거나 최상위 노드를 outlet으로 사용하지 않는지 확인해보세요."); // prettier-ignore
 
         const recursive = (o: HTMLElement, d: number = 0) => {
-          if (d < len) {
+          if (d < L.length) {
             if (o) {
               o.innerHTML = "";
               o.appendChild(L[d + 1] || m);
@@ -95,17 +96,17 @@ export class Router {
           }
         };
         recursive(T as HTMLElement);
-        if (!R.contains(W)) {
-          R.innerHTML = "";
-          R.appendChild(W);
+        if (!this.root.contains(W)) {
+          this.root.innerHTML = "";
+          this.root.appendChild(W);
         }
       } else {
         const o = m.querySelector("[outlet]");
         if (o) o.innerHTML = "";
-        R.innerHTML = "";
-        R.appendChild(m);
+        this.root.innerHTML = "";
+        this.root.appendChild(m);
       }
-    } else R.innerHTML = ""; // 매칭되는 URL 존재하지 않음
+    } else this.root.innerHTML = ""; // 매칭되는 URL 존재하지 않음
   };
 
   routes(root: HTMLElement, routes: Routes[]): HTMLElement {

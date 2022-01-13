@@ -3,8 +3,11 @@ import Router from "router";
 
 class Login extends Components {
   constructor() {
-    super();
-    console.log("Login");
+    super({
+      state: {
+        name: "Jack",
+      },
+    });
   }
 
   template() {

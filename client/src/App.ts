@@ -26,12 +26,10 @@ class App extends Components {
           {
             path: "/main",
             component: Main,
-            children: [
-              {
-                path: "/main/chat",
-                component: Chat,
-              },
-            ],
+          },
+          {
+            path: "/main/chat",
+            component: Chat,
           },
         ],
       },
