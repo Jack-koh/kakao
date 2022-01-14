@@ -1,5 +1,7 @@
 :root {
-  // --brand: #ffbf00;
+  --brand: #ffeb33;
+  --white: #fff;
+  --input: #404040;
   // --light-gray: #eeeeee;
   // --gray: #555555;
 }
@@ -45,6 +47,14 @@ input {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  outline: none;
+}
+
+input[type="button"] {
+  cursor: pointer;
+  &:disabled {
+    cursor: default;
+  }
 }
 
 body {
@@ -71,4 +81,9 @@ a:focus {
 #root {
   width: 100%;
   height: 100%;
+
+  #app {
+    width: 100%;
+    height: 100%;
+  }
 }

@@ -1,7 +1,8 @@
 import { Components } from "view";
 import Router from "router";
+import * as pages from "pages";
 
-class Main extends Components {
+export class Main extends Components {
   constructor() {
     super({
       state: {
@@ -34,5 +35,3 @@ class Main extends Components {
     };
   }
 }
-
-export default Main;

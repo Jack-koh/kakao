@@ -1,15 +1,14 @@
 interface Events {
-  $parent: HTMLElement;
-  newParent: HTMLElement;
+  $element: HTMLElement;
+  newDom: HTMLElement;
+  methods?(): { [key: string]: (arg?: any) => void };
 }
 
 abstract class Events {
-  abstract methods(): { [key: string]: () => void };
-
-  update(generateTemplate: Function): void {
-    generateTemplate();
-    const newElements: HTMLElement[] = Array.from(this.newParent.querySelectorAll("*")); // prettier-ignore
-    const prevElements:HTMLElement[] = Array.from(this.$parent.querySelectorAll("*")); // prettier-ignore
+  update(generateDOM: Function): void {
+    generateDOM();
+    const newElements: HTMLElement[] = Array.from(this.newDom.querySelectorAll("*")); // prettier-ignore
+    const prevElements:HTMLElement[] = Array.from(this.$element.querySelectorAll("*")); // prettier-ignore
 
     newElements.forEach((newEl: HTMLElement, i: number) => {
       const prevEl = prevElements[i];
@@ -26,17 +25,29 @@ abstract class Events {
     });
   }
 
-  click() {
-    type methods = { [key: string]: () => any } | null;
+  onclick() {
     type click = NodeListOf<Element> | null;
-    let clicks: click = this.$parent.querySelectorAll("[v-onclick]");
-    let methods: methods = this.methods ? this.methods() : {};
+    let clicks: click = this.$element.querySelectorAll("[v-onclick]");
+    let methods = this.methods ? this.methods() : {};
     if (!clicks.length) return;
 
     for (const t of clicks) {
       const target = t as HTMLElement;
       const ev = target.getAttribute("v-onclick");
       if (ev && methods[ev]) target.onclick = methods[ev];
+    }
+  }
+
+  onchange() {
+    type click = NodeListOf<Element> | null;
+    let changes: click = this.$element.querySelectorAll("[v-onchange]");
+    let methods = this.methods ? this.methods() : {};
+    if (!changes.length) return;
+
+    for (const t of changes) {
+      const target = t as HTMLElement;
+      const ev = target.getAttribute("v-onchange");
+      if (ev && methods[ev]) target.oninput = methods[ev];
     }
   }
 }

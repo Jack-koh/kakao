@@ -1,8 +1,6 @@
 import { Components } from "view";
 import Router from "router";
-import Main from "pages/Main";
-import Chat from "pages/Chat";
-import Login from "pages/Login";
+import * as pages from "pages";
 
 class App extends Components {
   constructor() {
@@ -13,25 +11,11 @@ class App extends Components {
     return `<div id="app"></div>`;
   }
 
-  methods() {
-    return {};
-  }
-
   render() {
-    return Router.routes(this.$parent, [
+    return Router.routes(this.$element, [
       {
         path: "/",
-        component: Login,
-        children: [
-          {
-            path: "/main",
-            component: Main,
-          },
-          {
-            path: "/main/chat",
-            component: Chat,
-          },
-        ],
+        component: pages.Login,
       },
     ]);
   }
