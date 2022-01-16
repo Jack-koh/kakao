@@ -1,5 +1,4 @@
 import { Components } from "view";
-import Router from "router";
 import Logo from "assets/img/kakao_logo.png";
 import "./Login.scss";
 
