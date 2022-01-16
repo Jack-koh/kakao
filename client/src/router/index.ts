@@ -28,4 +28,4 @@ export const Outlet = (args?: Outlet) => {
   return outlet.outerHTML;
 };
 
-export const Route = router.routes;
+export const Route = router.routes.bind(router);

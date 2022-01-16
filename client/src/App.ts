@@ -8,7 +8,7 @@ class App extends Components {
   }
 
   template() {
-    return `<div id="app"></div>`;
+    return '<div id="app"></div>';
   }
 
   render() {
