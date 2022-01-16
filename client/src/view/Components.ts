@@ -1,29 +1,27 @@
 import Events from "./Events";
 
-function render(name: any) {
-  console.log(name);
-  return function (
-    target: Object,
-    key: string | symbol,
-    descriptor: PropertyDescriptor
-  ) {
-    console.log({ target, key, descriptor });
-    return descriptor;
-  };
-}
+// function render(name: any) {
+//   return function (
+//     target: Object,
+//     key: string | symbol,
+//     descriptor: PropertyDescriptor
+//   ) {
+//     console.log({ target, key, descriptor });
+//     return descriptor;
+//   };
+// }
 
 interface State {
   [key: string]: any;
 }
 
 interface Components {
-  newParent: HTMLElement;
-  $parent: HTMLElement;
+  newDom: HTMLElement;
+  $element: HTMLElement;
 }
 
 abstract class Components extends Events implements Components {
   abstract template(): string;
-  abstract methods(): { [key: string]: () => any };
   mounted: boolean;
   state: State;
 
@@ -31,27 +29,29 @@ abstract class Components extends Events implements Components {
     super();
     this.state = state?.state || {};
     this.mount();
-    this.newParent;
+    this.newDom;
     this.mounted = false;
   }
 
-  generateTemplate() {
-    type Template = HTMLTemplateElement | null;
-    const template: Template = document.createElement("template"); // prettier-ignore
+  generateDOM() {
+    type Template = HTMLTemplateElement;
+    const template: Template = document.createElement("template");
     template.innerHTML = this.template();
-    this.newParent = document.importNode(template, true).content.firstElementChild as HTMLElement; // prettier-ignore
+    this.newDom = document.importNode(template, true).content.firstElementChild as HTMLElement; // prettier-ignore
   }
 
   mount() {
-    this.generateTemplate();
-    this.$parent = this.newParent;
-    this.click();
+    this.generateDOM();
+    this.$element = this.newDom;
+    this.onclick();
+    this.onchange();
   }
 
   render(): HTMLElement {
-    if (this.mounted) this.update(this.generateTemplate.bind(this));
+    const { generateDOM, mounted, $element } = this;
+    if (mounted) this.update(generateDOM.bind(this));
     else this.mounted = true;
-    return this.$parent;
+    return $element;
   }
 
   destroyed() {

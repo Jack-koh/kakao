@@ -1,7 +1,7 @@
 import { Components } from "view";
 import { Outlet } from "router";
 
-class Main extends Components {
+export class Main extends Components {
   constructor() {
     super({
       state: {
@@ -34,5 +34,3 @@ class Main extends Components {
     };
   }
 }
-
-export default Main;
