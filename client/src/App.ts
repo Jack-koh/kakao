@@ -1,5 +1,5 @@
 import { Components } from "view";
-import Router from "router";
+import { Route } from "router";
 import Main from "pages/Main";
 import Chat from "pages/Chat";
 import Login from "pages/Login";
@@ -18,7 +18,7 @@ class App extends Components {
   }
 
   render() {
-    return Router.routes(this.$parent, [
+    return Route(this.$parent, [
       {
         path: "/",
         component: Login,

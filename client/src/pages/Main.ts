@@ -1,5 +1,5 @@
 import { Components } from "view";
-import Router from "router";
+import { Outlet } from "router";
 
 class Main extends Components {
   constructor() {
@@ -18,7 +18,7 @@ class Main extends Components {
         메인페이지 입니다
         <div v-onclick="text" id="textBtn">텍스트버튼</div>
         <div id="text">${this.state.data.number.join(", ")}</div>
-        ${Router.outlet()}
+        ${Outlet()}
       </div>
     `;
   }
