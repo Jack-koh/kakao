@@ -1,0 +1,10 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
+  "username": "postgres",
+  "password": "qwe123qwe123!",
+  "database": "kakao",
+  "entities": [],
+  "synchronize": true
+}
