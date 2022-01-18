@@ -1,0 +1,9 @@
+server:
+  port: 5000
+
+db:
+  type: 'postgres'
+  port: 5432
+  database: 'kakao'
+jwt:
+  expiresIn: 3600
